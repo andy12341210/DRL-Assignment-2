@@ -44,7 +44,7 @@ class TD_MCTS_Node:
         self.visits = 0
         self.total_reward = 0.0
         # List of untried actions based on the current state's legal moves
-        self.untried_actions = [a for a in range(4) if env.is_move_legal(a)]
+        self.untried_actions = [a for a in range(4)]
 
     def fully_expanded(self):
         # A node is fully expanded if no legal actions remain untried.
