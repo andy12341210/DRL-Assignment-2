@@ -15,7 +15,7 @@ def value_shaping(board):
             shaping_value[2] += board[3-i][3-j] * PERFECT_SNAKE[i][j]
             shaping_value[3] += board[j][3-i] * PERFECT_SNAKE[i][j]
 
-    return np.max(shaping_value)
+    return np.max(shaping_value)*2048
 
 import copy
 import random
