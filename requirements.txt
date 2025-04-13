@@ -2,5 +2,6 @@ tqdm
 requests
 argparse
 torch
+dill
 matplotlib
 numba
