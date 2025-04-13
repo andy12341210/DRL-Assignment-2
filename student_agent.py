@@ -1,10 +1,28 @@
 from env2048 import Game2048Env
+# from evaluate import evaluate
+# from Approximator import NTupleApproximator, patterns, PERFECT_SNAKE
+import copy
+import random
+import math
+import dill
+import numpy as np
 
-
+import numpy as np
+import random
+from env2048 import Game2048Env, move_board
+from evaluate import evaluate, create_env_from_state
 PERFECT_SNAKE = [[0, 0, 0, 1/2**12],
-          [1/2**8, 1/2**9, 1/2**10, 1/2**11],
-          [1/2**7, 1/2**6, 1/2**5, 1/2**4],
-          [1,1/2,1/2**2,1/2**3]]
+                [1/2**8, 1/2**9, 1/2**10, 1/2**11],
+                [1/2**7, 1/2**6, 1/2**5, 1/2**4],
+                [1,1/2,1/2**2,1/2**3]]
+
+
+
+# approximator = NTupleApproximator(board_size=4, patterns=patterns, init_value=0)
+# with open('model.pkl', 'rb') as f:
+#     approximator = dill.load(f)
+approximator = None
+
 def value_shaping(board):
     #return 0
     shaping_value = [0,0,0,0]
@@ -17,17 +35,7 @@ def value_shaping(board):
 
     return np.max(shaping_value)*2048
 
-import copy
-import random
-import math
-import numpy as np
 
-
-
-# Note: This MCTS implementation is almost identical to the previous one,
-# except for the rollout phase, which now incorporates the approximator.
-
-# Node for TD-MCTS using the TD-trained value approximator
 class TD_MCTS_Node:
     def __init__(self, state, score, parent=None, action=None):
         """
@@ -187,14 +195,16 @@ class TD_MCTS:
             if child.visits > best_visits:
                 best_visits = child.visits
                 best_action = action
+
+        sim_env = create_env_from_state(root.state,root.score)
+        best_action = evaluate(sim_env, approximator, 3)
         return best_action, distribution
 
-approximator = []
 def get_action(state, score):
     env = Game2048Env()
     env.board = state
     env.score = score
-    iterations = [200,500,1000,500]
+    iterations = [0,0,0,0]
 
     td_mcts = TD_MCTS(env, approximator, iterations=50, exploration_constant=1.41, rollout_depth=3, gamma=0.9)
 
